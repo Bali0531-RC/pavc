@@ -1,4 +1,4 @@
-declare module 'plexaddons-version-checker' {
+declare module 'pavc' {
   export interface VersionInfo {
     version: string;
     changelog?: string;

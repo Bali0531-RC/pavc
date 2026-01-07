@@ -4,12 +4,14 @@ A version checker library for addons registered on [addons.plexdev.live](https:/
 
 ## Installation
 
-Copy `VersionChecker.js` directly into your project.
+```bash
+npm install pavc
+```
 
 ## Quick Start
 
 ```javascript
-const VersionChecker = require('./VersionChecker.js');
+const VersionChecker = require('pavc');
 
 // Basic usage - automatically tracks analytics
 const checker = new VersionChecker('MyAddon', '1.0.0');
@@ -35,7 +37,7 @@ await checker.checkAndLog();
 ## Basic Usage
 
 ```javascript
-const VersionChecker = require('./VersionChecker.js');
+const VersionChecker = require('pavc');
 
 const checker = new VersionChecker('MyAddon', '1.0.0');
 
@@ -131,7 +133,7 @@ interface VersionCheckResult {
 
 ```javascript
 const { Client } = require('discord.js');
-const VersionChecker = require('./VersionChecker.js');
+const VersionChecker = require('pavc');
 
 const client = new Client({ intents: [...] });
 const checker = new VersionChecker(
@@ -186,4 +188,5 @@ AGPL-3.0 - See [LICENSE](LICENSE) for details.
 
 - 🌐 **Website**: [addons.plexdev.live](https://addons.plexdev.live)
 - 📚 **API Docs**: [addons.plexdev.live/api/docs](https://addons.plexdev.live/api/docs)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/Bali0531-RC/PlexAddons/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Bali0531-RC/pavc/issues)
+- 📦 **NPM Package**: [npmjs.com/package/pavc](https://www.npmjs.com/package/pavc)

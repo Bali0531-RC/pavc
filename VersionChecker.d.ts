@@ -36,13 +36,13 @@ declare module 'pavc' {
   export interface VersionCheckerOptions {
     /**
      * URL to fetch versions.json from (fallback)
-     * @default "https://addons.plexdev.live/versions.json"
+     * @default "https://addons.plexdev.xyz/versions.json"
      */
     repositoryUrl?: string;
 
     /**
      * Base URL for the PlexAddons API
-     * @default "https://addons.plexdev.live"
+     * @default "https://addons.plexdev.xyz"
      */
     apiUrl?: string;
 

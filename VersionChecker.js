@@ -2,7 +2,7 @@
  * PlexAddons Version Checker
  * 
  * A lightweight version checker for Plex addons that integrates with
- * the PlexAddons API at addons.plexdev.live
+ * the PlexAddons API at addons.plexdev.xyz
  * 
  * @example
  * const VersionChecker = require('./VersionChecker');
@@ -11,7 +11,7 @@
  * console.log(checker.formatVersionMessage(result));
  * 
  * // Analytics are tracked automatically (version sent to API)
- * // Addon owners can view analytics in their dashboard at addons.plexdev.live
+ * // Addon owners can view analytics in their dashboard at addons.plexdev.xyz
  * 
  * @author bali0531
  * @license AGPL-3.0
@@ -25,7 +25,7 @@ class VersionChecker {
      * @param {string} addonName - The name of your addon (must match registry)
      * @param {string} currentVersion - Your addon's current version (e.g., "1.0.0")
      * @param {Object} options - Configuration options
-     * @param {string} [options.apiUrl] - Custom API URL (default: addons.plexdev.live)
+     * @param {string} [options.apiUrl] - Custom API URL (default: addons.plexdev.xyz)
      * @param {string} [options.repositoryUrl] - Legacy versions.json URL (fallback)
      * @param {boolean} [options.checkOnStartup] - Auto-check on startup (default: true)
      * @param {number} [options.timeout] - Request timeout in ms (default: 10000)
@@ -37,8 +37,8 @@ class VersionChecker {
         this.addonName = addonName;
         this.currentVersion = currentVersion;
         this.options = {
-            apiUrl: options.apiUrl || 'https://addons.plexdev.live',
-            repositoryUrl: options.repositoryUrl || 'https://addons.plexdev.live/versions.json',
+            apiUrl: options.apiUrl || 'https://addons.plexdev.xyz',
+            repositoryUrl: options.repositoryUrl || 'https://addons.plexdev.xyz/versions.json',
             checkOnStartup: options.checkOnStartup !== false,
             timeout: options.timeout || 10000,
             retries: options.retries || 2,

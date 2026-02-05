@@ -36,7 +36,7 @@ async function analyticsExample() {
     // Analytics tracking is ON by default
     // When your users check for updates, their current version is sent to the API
     // You (the addon owner) can view version distribution in your dashboard
-    // at addons.plexdev.live - no API key needed in the VersionChecker!
+    // at addons.plexdev.xyz - no API key needed in the VersionChecker!
     
     const checker = new VersionChecker('MyAddon', '1.0.0');
     const result = await checker.checkForUpdates();

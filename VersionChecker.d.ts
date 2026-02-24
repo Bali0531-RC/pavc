@@ -94,6 +94,9 @@ declare module 'pavc' {
     /** URL-safe slug generated from addon name */
     addonSlug: string;
 
+    /** Persistent unique instance identifier for analytics */
+    instanceId: string;
+
     /**
      * Check for updates
      * @returns Promise resolving to version check result

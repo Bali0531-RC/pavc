@@ -18,6 +18,37 @@
  */
 
 const fetch = require('node-fetch');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Get or create a persistent unique instance ID.
+ * Stored in ~/.pavc/instance-id so it survives across restarts
+ * but is unique per machine/environment.
+ */
+function getInstanceId() {
+    const dir = path.join(require('os').homedir(), '.pavc');
+    const file = path.join(dir, 'instance-id');
+
+    try {
+        if (fs.existsSync(file)) {
+            const id = fs.readFileSync(file, 'utf8').trim();
+            if (id.length >= 32) return id;
+        }
+    } catch { /* regenerate on read error */ }
+
+    const id = crypto.randomUUID
+        ? crypto.randomUUID()
+        : crypto.randomBytes(16).toString('hex');
+
+    try {
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(file, id, 'utf8');
+    } catch { /* non-fatal: just use an ephemeral id */ }
+
+    return id;
+}
 
 class VersionChecker {
     /**
@@ -49,6 +80,9 @@ class VersionChecker {
         
         // Generate slug from addon name
         this.addonSlug = this.slugify(addonName);
+        
+        // Persistent unique instance ID for analytics differentiation
+        this.instanceId = getInstanceId();
     }
 
     /**
@@ -112,6 +146,7 @@ class VersionChecker {
                 const headers = {
                     'User-Agent': `PlexAddons-VersionChecker/${this.addonName}/2.1.0`,
                     'Accept': 'application/json',
+                    'X-Client-Id': this.instanceId,
                     ...extraHeaders
                 };
                 

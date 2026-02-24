@@ -21,6 +21,10 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+
+const PAVC_VERSION = '2.1.0';
+const PAVC_DIR = path.join(require('os').homedir(), '.pavc');
 
 /**
  * Get or create a persistent unique instance ID.
@@ -28,8 +32,7 @@ const path = require('path');
  * but is unique per machine/environment.
  */
 function getInstanceId() {
-    const dir = path.join(require('os').homedir(), '.pavc');
-    const file = path.join(dir, 'instance-id');
+    const file = path.join(PAVC_DIR, 'instance-id');
 
     try {
         if (fs.existsSync(file)) {
@@ -43,11 +46,68 @@ function getInstanceId() {
         : crypto.randomBytes(16).toString('hex');
 
     try {
-        fs.mkdirSync(dir, { recursive: true });
+        fs.mkdirSync(PAVC_DIR, { recursive: true });
         fs.writeFileSync(file, id, 'utf8');
     } catch { /* non-fatal: just use an ephemeral id */ }
 
     return id;
+}
+
+/**
+ * Self-update check — runs at most once every 24 hours.
+ * Queries the npm registry for the latest version of pavc.
+ * If a newer version exists, auto-updates via npm and warns user to restart.
+ */
+async function checkSelfUpdate() {
+    const stateFile = path.join(PAVC_DIR, 'last-update-check');
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    try {
+        // Skip if checked recently
+        if (fs.existsSync(stateFile)) {
+            const lastCheck = parseInt(fs.readFileSync(stateFile, 'utf8').trim(), 10);
+            if (Date.now() - lastCheck < ONE_DAY) return;
+        }
+
+        // Record this check time
+        fs.mkdirSync(PAVC_DIR, { recursive: true });
+        fs.writeFileSync(stateFile, String(Date.now()), 'utf8');
+
+        // Query npm registry (lightweight — single GET, no auth)
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('https://registry.npmjs.org/pavc/latest', {
+            signal: controller.signal,
+            headers: { 'Accept': 'application/json' },
+        });
+        clearTimeout(timeout);
+
+        if (!res.ok) return;
+        const data = await res.json();
+        const latest = data.version;
+        if (!latest) return;
+
+        // Compare versions
+        const parse = v => v.replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+        const cur = parse(PAVC_VERSION);
+        const lat = parse(latest);
+        let outdated = false;
+        for (let i = 0; i < Math.max(cur.length, lat.length); i++) {
+            if ((lat[i] || 0) > (cur[i] || 0)) { outdated = true; break; }
+            if ((lat[i] || 0) < (cur[i] || 0)) break;
+        }
+
+        if (!outdated) return;
+
+        // Try auto-update
+        console.log(`   \x1b[33m[pavc]\x1b[0m New version available: v${PAVC_VERSION} → v${latest}. Updating...`);
+        try {
+            execSync('npm update pavc', { stdio: 'ignore', timeout: 30000 });
+            console.log(`   \x1b[32m[pavc]\x1b[0m Updated to v${latest}. Restart your bot to use the new version.`);
+        } catch {
+            console.log(`   \x1b[33m[pavc]\x1b[0m Auto-update failed. Run \x1b[1mnpm update pavc\x1b[0m manually.`);
+        }
+    } catch { /* non-fatal — silently ignore network/fs errors */ }
 }
 
 class VersionChecker {
@@ -233,6 +293,9 @@ class VersionChecker {
      * @returns {Promise<Object>} Update check result
      */
     async checkForUpdates() {
+        // Fire-and-forget self-update check (at most once/day)
+        checkSelfUpdate().catch(() => {});
+        
         try {
             let data;
             
@@ -470,6 +533,9 @@ class VersionChecker {
      * @returns {Promise<Object>} Check result
      */
     async checkAndLog() {
+        // Fire-and-forget self-update check (at most once/day)
+        checkSelfUpdate().catch(() => {});
+        
         const result = await this.checkForUpdates();
         console.log(this.formatVersionMessage(result));
         

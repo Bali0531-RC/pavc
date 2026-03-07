@@ -1,6 +1,6 @@
 {
   "name": "pavc",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Version checker for PlexAddons - integrates with addons.plexdev.xyz API",
   "keywords": [
     "plex",
@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/Bali0531-RC/pavc.git"
   },
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "author": "bali0531",
   "type": "commonjs",
   "main": "VersionChecker.js",

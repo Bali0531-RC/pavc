@@ -14,7 +14,7 @@
  * // Addon owners can view analytics in their dashboard at addons.plexdev.xyz
  * 
  * @author bali0531
- * @license AGPL-3.0
+ * @license MIT
  */
 
 const fetch = require('node-fetch');
@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const PAVC_VERSION = '2.1.0';
+const PAVC_VERSION = '2.1.2';
 const PAVC_DIR = path.join(require('os').homedir(), '.pavc');
 
 /**

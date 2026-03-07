@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const PAVC_VERSION = '2.1.2';
+const PAVC_VERSION = '2.2.0';
 const PAVC_DIR = path.join(require('os').homedir(), '.pavc');
 
 /**

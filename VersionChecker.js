@@ -204,7 +204,7 @@ class VersionChecker {
                 const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
                 
                 const headers = {
-                    'User-Agent': `PlexAddons-VersionChecker/${this.addonName}/2.1.0`,
+                    'User-Agent': `PlexAddons-VersionChecker/${this.addonName}/${PAVC_VERSION}`,
                     'Accept': 'application/json',
                     'X-Client-Id': this.instanceId,
                     ...extraHeaders
@@ -238,8 +238,9 @@ class VersionChecker {
      * @returns {Promise<Object>} Addon and version data
      */
     async fetchFromApi() {
-        // Public API endpoints (no v1 prefix)
-        const latestUrl = `${this.options.apiUrl}/api/addons/${this.addonName}/latest`;
+        // Public API endpoints (no v1 prefix); encode the name so addons with
+        // spaces/special characters produce a valid URL
+        const latestUrl = `${this.options.apiUrl}/api/addons/${encodeURIComponent(this.addonName)}/latest`;
         
         // Build headers - include current version for analytics if enabled
         const headers = {};
